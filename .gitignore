@@ -1,0 +1,50 @@
+########## WEBSTORM / INTELLIJ ##########
+.idea/
+*.iml
+out/
+.idea_modules/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf/
+.idea/**/modules.xml
+.idea/**/gradle.xml
+.idea/**/libraries/
+
+########## NODE & REACT / VITE ##########
+node_modules/
+**/node_modules/
+dist/
+build/
+.cache/
+vite-error.log
+vite.config.ts.timestamp-*
+vite.config.js.timestamp-*
+
+########## ENVIRONMENT FILES ##########
+.env
+.env.local
+.env.*.local
+
+########## LOGS ##########
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+########## OS JUNK ##########
+.DS_Store
+Thumbs.db
+desktop.ini
+
+########## TEMP / BACKUP ##########
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.cache/
+coverage/
