@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { getMenu } from "../api/menuApi";
+import {
+    Container,
+    Typography,
+    Grid,
+    Card,
+    CardContent,
+    Chip,
+    Box,
+    CircularProgress
+} from "@mui/material";
 
 export default function MenuPage() {
     const [menu, setMenu] = useState([]);
@@ -19,51 +29,65 @@ export default function MenuPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen p-6">
-                <h1 className="text-3xl font-bold mb-4">Menu</h1>
-                <p>Loading menu...</p>
-            </div>
+            <Container sx={{ mt: 4, textAlign: 'center' }}>
+                <CircularProgress />
+                <Typography sx={{ mt: 2 }}>Loading menu...</Typography>
+            </Container>
         );
     }
 
     if (menu.length === 0) {
         return (
-            <div className="min-h-screen p-6">
-                <h1 className="text-3xl font-bold mb-4">Menu</h1>
-                <p>No menu items available.</p>
-            </div>
+            <Container sx={{ mt: 4 }}>
+                <Typography variant="h4" gutterBottom>Menu</Typography>
+                <Typography>No menu items available.</Typography>
+            </Container>
         );
     }
 
     return (
-        <div className="min-h-screen p-6">
-            <h1 className="text-3xl font-bold mb-6">Our Menu</h1>
+        <Container sx={{ mt: 4, mb: 4 }}>
+            <Typography variant="h3" component="h1" gutterBottom fontWeight="bold" align="center">
+                Our Menu
+            </Typography>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Grid container spacing={3}>
                 {menu.map((item) => (
-                    <div
-                        key={item._id}
-                        className="border rounded-lg p-4 shadow bg-white"
-                    >
-                        <h2 className="text-xl font-semibold">{item.name}</h2>
-                        <p className="text-gray-500">{item.category}</p>
+                    <Grid item xs={12} sm={6} md={4} key={item._id}>
+                        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            <CardContent sx={{ flexGrow: 1 }}>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                                    <Typography variant="h5" component="div">
+                                        {item.name}
+                                    </Typography>
+                                    <Typography variant="h6" color="primary">
+                                        {item.price} EGP
+                                    </Typography>
+                                </Box>
 
-                        {item.description && (
-                            <p className="mt-2 text-gray-700">{item.description}</p>
-                        )}
+                                <Typography color="text.secondary" gutterBottom>
+                                    {item.category}
+                                </Typography>
 
-                        <p className="mt-3 font-bold">{item.price} EGP</p>
+                                {item.description && (
+                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                                        {item.description}
+                                    </Typography>
+                                )}
 
-                        <p
-                            className={`mt-2 font-medium ${
-                                item.isAvailable ? "text-green-600" : "text-red-600"
-                            }`}
-                        >
-                            {item.isAvailable ? "Available" : "Not Available"}
-                        </p>
-                    </div>
+                                <Box sx={{ mt: 2 }}>
+                                    <Chip
+                                        label={item.isAvailable ? "Available" : "Not Available"}
+                                        color={item.isAvailable ? "success" : "error"}
+                                        variant="outlined"
+                                        size="small"
+                                    />
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    </Grid>
                 ))}
-            </div>
-        </div>
+            </Grid>
+        </Container>
     );
 }

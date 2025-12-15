@@ -1,19 +1,20 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import Navbar from "./Navbar.jsx";
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
 
 export default function Layout({ children }) {
     const { user } = useAuth();
-    const isAdmin = user?.role === "admin";
-
+    // Theme handling is now done via ThemeProvider in main.jsx, 
+    // but we can still use specific classes or styles if needed.
+    
     return (
-        <div className={isAdmin ? "admin-theme min-h-screen" : "customer-theme min-h-screen"}>
+        <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             <Navbar />
-
-            {/* Shared page container */}
-            <main className="px-4 py-6 max-w-5xl mx-auto">
+            <Container component="main" maxWidth="lg" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
                 {children}
-            </main>
-        </div>
+            </Container>
+        </Box>
     );
 }

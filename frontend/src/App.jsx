@@ -12,11 +12,13 @@ import CustomerDashboard from "./pages/CustomerDashboard.jsx";
 import ReservationPage from "./pages/ReservationPage.jsx";
 import MenuPage from "./pages/MenuPage.jsx";
 import FeedbackPage from "./pages/FeedbackPage.jsx";
+import OrderFoodPage from "./pages/OrderFoodPage.jsx";
 
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import AdminReservations from "./pages/AdminReservations.jsx";
 import AdminMenu from "./pages/AdminMenu.jsx";
 import AdminFeedback from "./pages/AdminFeedback.jsx";
+import AdminUsers from "./pages/AdminUsers.jsx";
 
 export default function App() {
     return (
@@ -64,6 +66,15 @@ export default function App() {
                         }
                     />
 
+                    <Route
+                        path="/order-food/:reservationId"
+                        element={
+                            <ProtectedRoute>
+                                <OrderFoodPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
                     {/* ADMIN ROUTES */}
                     <Route
                         path="/admin"
@@ -94,6 +105,14 @@ export default function App() {
                         element={
                             <AdminRoute>
                                 <AdminFeedback />
+                            </AdminRoute>
+                        }
+                    />
+                    <Route
+                        path="/admin/users"
+                        element={
+                            <AdminRoute>
+                                <AdminUsers />
                             </AdminRoute>
                         }
                     />

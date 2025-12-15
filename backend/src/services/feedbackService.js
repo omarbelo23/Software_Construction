@@ -1,3 +1,4 @@
+// src/services/feedbackService.js
 import feedbackRepo from "../repositories/feedbackRepository.js";
 
 export default {
@@ -5,5 +6,5 @@ export default {
         return feedbackRepo.create({ userId, reservationId, rating, comment });
     },
 
-    getAllFeedback: () => feedbackRepo.findAll()
+    getAllFeedback: () => feedbackRepo.findAll(),
 };

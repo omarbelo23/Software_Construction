@@ -1,5 +1,17 @@
 import { useEffect, useState } from "react";
 import { getMenu } from "../api/menuApi.js";
+import {
+    Container,
+    Typography,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Chip
+} from "@mui/material";
 
 export default function AdminMenu() {
     const [menu, setMenu] = useState([]);
@@ -11,24 +23,45 @@ export default function AdminMenu() {
     }, []);
 
     return (
-        <div>
-            <h2>Menu Items</h2>
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Typography variant="h4" gutterBottom>
+                Menu Items
+            </Typography>
 
             {menu.length === 0 ? (
-                <p>No menu items found</p>
+                <Paper sx={{ p: 3 }}>
+                    <Typography>No menu items found</Typography>
+                </Paper>
             ) : (
-                <ul>
-                    {menu.map(item => (
-                        <li key={item._id} style={{ marginBottom: "10px" }}>
-                            <strong>{item.name}</strong> — ${item.price}
-                            <br />
-                            Category: {item.category}
-                            <br />
-                            Available: {item.isAvailable ? "Yes" : "No"}
-                        </li>
-                    ))}
-                </ul>
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead sx={{ bgcolor: 'action.hover' }}>
+                            <TableRow>
+                                <TableCell><strong>Name</strong></TableCell>
+                                <TableCell><strong>Category</strong></TableCell>
+                                <TableCell><strong>Price</strong></TableCell>
+                                <TableCell><strong>Status</strong></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {menu.map(item => (
+                                <TableRow key={item._id} hover>
+                                    <TableCell>{item.name}</TableCell>
+                                    <TableCell>{item.category}</TableCell>
+                                    <TableCell>${item.price}</TableCell>
+                                    <TableCell>
+                                        <Chip 
+                                            label={item.isAvailable ? "Available" : "Unavailable"} 
+                                            color={item.isAvailable ? "success" : "default"}
+                                            size="small"
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             )}
-        </div>
+        </Container>
     );
 }

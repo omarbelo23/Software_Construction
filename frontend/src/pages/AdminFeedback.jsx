@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import { listFeedback } from "../api/feedbackApi.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import {
+    Container,
+    Typography,
+    Paper,
+    Grid,
+    Card,
+    CardContent,
+    Rating,
+    Box
+} from "@mui/material";
 
 export default function AdminFeedback() {
     const { token } = useAuth();
@@ -13,26 +23,39 @@ export default function AdminFeedback() {
     }, []);
 
     return (
-        <div>
-            <h2>All Feedback</h2>
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Typography variant="h4" gutterBottom>
+                All Feedback
+            </Typography>
 
             {feedback.length === 0 ? (
-                <p>No feedback found</p>
+                <Paper sx={{ p: 3 }}>
+                    <Typography>No feedback found</Typography>
+                </Paper>
             ) : (
-                <ul>
+                <Grid container spacing={2}>
                     {feedback.map(f => (
-                        <li key={f._id} style={{ marginBottom: "10px" }}>
-                            <strong>Rating: {f.rating}</strong>
-                            <br />
-                            Comment: {f.comment}
-                            <br />
-                            Reservation ID: {f.reservationId}
-                            <br />
-                            User ID: {f.userId}
-                        </li>
+                        <Grid item xs={12} md={6} key={f._id}>
+                            <Card variant="outlined">
+                                <CardContent>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                                        <Rating value={f.rating} readOnly />
+                                        <Typography variant="caption" color="text.secondary">
+                                            User: {f.userId}
+                                        </Typography>
+                                    </Box>
+                                    <Typography variant="body1" gutterBottom>
+                                        {f.comment}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary" display="block">
+                                        Reservation ID: {f.reservationId}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
                     ))}
-                </ul>
+                </Grid>
             )}
-        </div>
+        </Container>
     );
 }

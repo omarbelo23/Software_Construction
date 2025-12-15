@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:5000/api/feedback";
+const API = "http://localhost:4001/api/feedback";
 
 export const submitFeedback = (token, data) =>
     axios.post(API, data, {
@@ -8,6 +8,6 @@ export const submitFeedback = (token, data) =>
     });
 
 export const listFeedback = (token) =>
-    axios.get(`${API}/all`, {
+    axios.get(API, {
         headers: { Authorization: `Bearer ${token}` },
     });

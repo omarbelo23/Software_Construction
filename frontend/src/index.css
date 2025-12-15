@@ -1,19 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Global theme containers */
-.customer-theme {
-  @apply bg-[#f7f0e8] text-[#272727];
-}
-
-.admin-theme {
-  @apply bg-[#121212] text-[#f2f2f2];
-}
-.customer-theme {
-  @apply bg-[#f7f0e8] text-[#272727];
-}
-
-.admin-theme {
-  @apply bg-[#121212] text-[#f2f2f2];
+/* Global styles are now handled by Material UI ThemeProvider and CssBaseline */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }

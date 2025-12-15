@@ -1,4 +1,4 @@
 import axios from "axios";
 
 export const getMenu = () =>
-    axios.get("http://localhost:5000/api/menu");
+    axios.get("http://localhost:4001/api/menu");
