@@ -2,21 +2,16 @@ import { useEffect, useState } from "react";
 import { getAllUsers, deleteUser } from "../api/authApi.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import {
-    Container,
-    Typography,
-    Paper,
     Table,
     TableBody,
     TableCell,
-    TableContainer,
     TableHead,
+    TableHeader,
     TableRow,
-    Button,
-    IconButton,
-    Chip,
-    CircularProgress
-} from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function AdminUsers() {
     const { token } = useAuth();
@@ -55,68 +50,69 @@ export default function AdminUsers() {
 
     if (loading) {
         return (
-            <Container sx={{ mt: 4, textAlign: 'center' }}>
-                <CircularProgress />
-                <Typography sx={{ mt: 2 }}>Loading users...</Typography>
-            </Container>
+            <div className="container mx-auto py-8 text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+                <p className="mt-4">Loading users...</p>
+            </div>
         );
     }
 
     return (
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Typography variant="h4" gutterBottom>
-                All Users
-            </Typography>
-            <Typography color="text.secondary" sx={{ mb: 3 }}>
+        <div className="container mx-auto py-8">
+            <h1 className="text-3xl font-bold mb-2">All Users</h1>
+            <p className="text-muted-foreground mb-6">
                 Total users: {users.length}
-            </Typography>
+            </p>
 
             {users.length === 0 ? (
-                <Paper sx={{ p: 3 }}>
-                    <Typography>No users found.</Typography>
-                </Paper>
+                <Card>
+                    <CardContent className="pt-6">
+                        <p className="text-muted-foreground">No users found.</p>
+                    </CardContent>
+                </Card>
             ) : (
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead sx={{ bgcolor: 'action.hover' }}>
-                            <TableRow>
-                                <TableCell><strong>Name</strong></TableCell>
-                                <TableCell><strong>Email</strong></TableCell>
-                                <TableCell><strong>Role</strong></TableCell>
-                                <TableCell><strong>User ID</strong></TableCell>
-                                <TableCell align="center"><strong>Actions</strong></TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {users.map((user) => (
-                                <TableRow key={user._id} hover>
-                                    <TableCell>{user.name}</TableCell>
-                                    <TableCell>{user.email}</TableCell>
-                                    <TableCell>
-                                        <Chip 
-                                            label={user.role} 
-                                            color={user.role === 'admin' ? 'primary' : 'default'}
-                                            size="small"
-                                        />
-                                    </TableCell>
-                                    <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>
-                                        {user._id}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <IconButton 
-                                            color="error" 
-                                            onClick={() => handleDelete(user._id, user.name)}
-                                            title="Delete User"
-                                        >
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </TableCell>
+                <Card>
+                    <CardContent className="pt-6">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="font-bold">Name</TableHead>
+                                    <TableHead className="font-bold">Email</TableHead>
+                                    <TableHead className="font-bold">Role</TableHead>
+                                    <TableHead className="font-bold">User ID</TableHead>
+                                    <TableHead className="font-bold text-center">Actions</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            </TableHeader>
+                            <TableBody>
+                                {users.map((user) => (
+                                    <TableRow key={user._id}>
+                                        <TableCell>{user.name}</TableCell>
+                                        <TableCell>{user.email}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                                                {user.role}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="font-mono text-sm">
+                                            {user._id}
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <Button 
+                                                variant="red" 
+                                                size="sm"
+                                                onClick={() => handleDelete(user._id, user.name)}
+                                                title="Delete User"
+                                            >
+                                                Delete
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
             )}
-        </Container>
+        </div>
     );
 }

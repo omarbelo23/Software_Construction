@@ -3,25 +3,17 @@ import { listAllReservations } from "../api/reservationApi.js";
 import { listFeedback } from "../api/feedbackApi.js";
 import { getMenu } from "../api/menuApi.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-  Container,
-  Typography,
-  Grid,
-  Paper,
-  Box,
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
+  TableHeader,
   TableRow,
-  Button,
-  Card,
-  CardContent,
-  CardActions,
-  Divider,
-  Chip
-} from "@mui/material";
+} from "@/components/ui/table";
 import { Link as RouterLink } from "react-router-dom";
 
 export default function AdminDashboard() {
@@ -107,255 +99,209 @@ export default function AdminDashboard() {
 
   if (!token) {
     return (
-      <Container maxWidth="sm" sx={{ mt: 4 }}>
-        <Paper sx={{ p: 4, textAlign: "center" }}>
-          <Typography variant="h5" gutterBottom>
-            Admin Dashboard
-          </Typography>
-          <Typography color="text.secondary">
-            You must be logged in as admin to view this page.
-          </Typography>
-        </Paper>
-      </Container>
+      <div className="container mx-auto max-w-xl py-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Admin Dashboard</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              You must be logged in as admin to view this page.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
-          Admin Dashboard
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary">
-          Overview — reservations, feedback and menu
-        </Typography>
-      </Box>
+    <div className="container mx-auto py-8">
+      <div className="mb-6">
+        <h1 className="text-4xl font-bold mb-2">Admin Dashboard</h1>
+        <p className="text-muted-foreground">Overview — reservations, feedback and menu</p>
+      </div>
 
       {loading ? (
-        <Paper sx={{ p: 4, textAlign: "center" }}>
-          <Typography>Loading dashboard...</Typography>
-        </Paper>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <p>Loading dashboard...</p>
+          </CardContent>
+        </Card>
       ) : error ? (
-        <Paper sx={{ p: 4, textAlign: "center" }}>
-          <Typography color="error">Error: {error}</Typography>
-        </Paper>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <p className="text-destructive">Error: {error}</p>
+          </CardContent>
+        </Card>
       ) : (
         <>
           {/* Metrics */}
-          <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} sm={6} md={3}>
-              <Paper sx={{ p: 3, display: 'flex', flexDirection: 'column', height: 140, bgcolor: 'primary.dark', color: 'white' }}>
-                <Typography variant="h6" gutterBottom>Reservations</Typography>
-                <Typography variant="h3" component="div" sx={{ mt: 'auto' }}>
-                  {stats.reservations}
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Paper sx={{ p: 3, display: 'flex', flexDirection: 'column', height: 140, bgcolor: 'secondary.dark', color: 'white' }}>
-                <Typography variant="h6" gutterBottom>Unique Customers</Typography>
-                <Typography variant="h3" component="div" sx={{ mt: 'auto' }}>
-                  {stats.customers}
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Paper sx={{ p: 3, display: 'flex', flexDirection: 'column', height: 140, bgcolor: 'success.dark', color: 'white' }}>
-                <Typography variant="h6" gutterBottom>Menu Items</Typography>
-                <Typography variant="h3" component="div" sx={{ mt: 'auto' }}>
-                  {stats.menuItems}
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Paper sx={{ p: 3, display: 'flex', flexDirection: 'column', height: 140, bgcolor: 'warning.dark', color: 'white' }}>
-                <Typography variant="h6" gutterBottom>Feedback</Typography>
-                <Typography variant="h3" component="div" sx={{ mt: 'auto' }}>
-                  {stats.feedback}
-                </Typography>
-              </Paper>
-            </Grid>
-          </Grid>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <Card className="bg-primary text-primary-foreground">
+              <CardHeader>
+                <CardTitle className="text-lg">Reservations</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-4xl font-bold">{stats.reservations}</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-secondary text-secondary-foreground">
+              <CardHeader>
+                <CardTitle className="text-lg">Unique Customers</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-4xl font-bold">{stats.customers}</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-primary text-primary-foreground">
+              <CardHeader>
+                <CardTitle className="text-lg">Menu Items</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-4xl font-bold">{stats.menuItems}</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-secondary text-secondary-foreground">
+              <CardHeader>
+                <CardTitle className="text-lg">Feedback</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-4xl font-bold">{stats.feedback}</p>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Tables: Reservations + Feedback */}
-          <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} lg={6}>
-              <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                  Recent Reservations
-                </Typography>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-primary">Recent Reservations</CardTitle>
+              </CardHeader>
+              <CardContent>
                 {reservations.length === 0 ? (
-                  <Typography color="text.secondary">No reservations yet.</Typography>
+                  <p className="text-muted-foreground">No reservations yet.</p>
                 ) : (
-                  <TableContainer sx={{ maxHeight: 400 }}>
-                    <Table size="small" stickyHeader>
-                      <TableHead>
+                  <div className="max-h-96 overflow-auto">
+                    <Table>
+                      <TableHeader>
                         <TableRow>
-                          <TableCell>Customer</TableCell>
-                          <TableCell>Date</TableCell>
-                          <TableCell>Time</TableCell>
-                          <TableCell>Party</TableCell>
-                          <TableCell>Status</TableCell>
+                          <TableHead>Customer</TableHead>
+                          <TableHead>Date</TableHead>
+                          <TableHead>Time</TableHead>
+                          <TableHead>Party</TableHead>
+                          <TableHead>Status</TableHead>
                         </TableRow>
-                      </TableHead>
+                      </TableHeader>
                       <TableBody>
                         {reservations.slice(0, 10).map((r) => (
                           <TableRow key={r._id}>
-                            <TableCell>{r.userName || r.user?.name || r.userId || "—"}</TableCell>
+                            <TableCell>{r.userName || r.user?.name || (typeof r.userId === 'object' ? r.userId?.name : r.userId) || "—"}</TableCell>
                             <TableCell>{r.date}</TableCell>
                             <TableCell>{r.time || formatDate(r.createdAt)}</TableCell>
                             <TableCell>{r.partySize ?? r.guests ?? "-"}</TableCell>
                             <TableCell>
-                              <Chip 
-                                label={r.status || "confirmed"} 
-                                size="small" 
-                                color={r.status === 'cancelled' ? 'error' : 'success'} 
-                                variant="outlined"
-                              />
+                              <Badge variant={r.status === 'cancelled' ? 'destructive' : 'default'}>
+                                {r.status || "confirmed"}
+                              </Badge>
                             </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
                     </Table>
-                  </TableContainer>
+                  </div>
                 )}
-              </Paper>
-            </Grid>
+              </CardContent>
+            </Card>
 
-            <Grid item xs={12} lg={6}>
-              <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                <Typography component="h2" variant="h6" color="primary" gutterBottom>
-                  Recent Feedback
-                </Typography>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-primary">Recent Feedback</CardTitle>
+              </CardHeader>
+              <CardContent>
                 {feedback.length === 0 ? (
-                  <Typography color="text.secondary">No feedback yet.</Typography>
+                  <p className="text-muted-foreground">No feedback yet.</p>
                 ) : (
-                  <Box sx={{ maxHeight: 400, overflow: 'auto' }}>
+                  <div className="max-h-96 overflow-auto space-y-2">
                     {feedback.slice(0, 10).map((f) => (
-                      <Card key={f._id} variant="outlined" sx={{ mb: 2 }}>
-                        <CardContent sx={{ py: 1, px: 2, '&:last-child': { pb: 1 } }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <Box>
-                              <Typography variant="subtitle2" fontWeight="bold">
-                                {f.userName || f.user?.name || f.userId}
-                              </Typography>
-                              <Typography variant="caption" color="text.secondary">
-                                {f.rating} ★ — {f.reservationId || ""}
-                              </Typography>
-                            </Box>
-                            <Typography variant="caption" color="text.secondary">
+                      <Card key={f._id} className="border">
+                        <CardContent className="py-2 px-3">
+                          <div className="flex justify-between items-start mb-1">
+                            <div>
+                              <p className="font-semibold text-sm">
+                                {f.userName || f.user?.name || (typeof f.userId === 'object' ? f.userId?.name : f.userId) || "Anonymous"}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {f.rating} ★ — {typeof f.reservationId === 'object' ? f.reservationId?._id : (f.reservationId || "")}
+                              </p>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
                               {formatDate(f.createdAt)}
-                            </Typography>
-                          </Box>
-                          <Typography variant="body2" sx={{ mt: 1 }}>
+                            </p>
+                          </div>
+                          <p className="text-sm">
                             {f.comment || f.message || "-"}
-                          </Typography>
+                          </p>
                         </CardContent>
                       </Card>
                     ))}
-                  </Box>
+                  </div>
                 )}
-              </Paper>
-            </Grid>
-          </Grid>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Quick Actions */}
-          <Paper sx={{ p: 3, mb: 4 }}>
-            <Typography component="h2" variant="h6" gutterBottom>
-              Quick Actions
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={3}>
-                <Button 
-                  component={RouterLink} 
-                  to="/admin/reservations" 
-                  variant="contained" 
-                  fullWidth 
-                  size="large"
-                  sx={{ height: '100%' }}
-                >
-                  Manage Reservations
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <Button asChild size="lg" className="h-auto py-4" variant="default">
+                  <RouterLink to="/admin/reservations">Manage Reservations</RouterLink>
                 </Button>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Button 
-                  component={RouterLink} 
-                  to="/admin/menu" 
-                  variant="contained" 
-                  color="success" 
-                  fullWidth 
-                  size="large"
-                  sx={{ height: '100%' }}
-                >
-                  Manage Menu
+                <Button asChild size="lg" className="h-auto py-4" variant="secondary">
+                  <RouterLink to="/admin/menu">Manage Menu</RouterLink>
                 </Button>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Button 
-                  component={RouterLink} 
-                  to="/admin/feedback" 
-                  variant="contained" 
-                  color="secondary" 
-                  fullWidth 
-                  size="large"
-                  sx={{ height: '100%' }}
-                >
-                  View Feedback
+                <Button asChild size="lg" className="h-auto py-4" variant="default">
+                  <RouterLink to="/admin/feedback">View Feedback</RouterLink>
                 </Button>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Button 
-                  component={RouterLink} 
-                  to="/admin/users" 
-                  variant="contained" 
-                  color="warning" 
-                  fullWidth 
-                  size="large"
-                  sx={{ height: '100%' }}
-                >
-                  View Users
+                <Button asChild size="lg" className="h-auto py-4" variant="secondary">
+                  <RouterLink to="/admin/users">View Users</RouterLink>
                 </Button>
-              </Grid>
-            </Grid>
-          </Paper>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Menu preview */}
-          <Paper sx={{ p: 3 }}>
-            <Typography component="h2" variant="h6" gutterBottom>
-              Menu Preview
-            </Typography>
-            {menu.length === 0 ? (
-              <Typography color="text.secondary">No menu items.</Typography>
-            ) : (
-              <Grid container spacing={2}>
-                {menu.slice(0, 6).map((m) => (
-                  <Grid item xs={12} sm={6} md={4} key={m._id}>
-                    <Card variant="outlined">
-                      <CardContent>
-                        <Typography variant="h6" component="div">
-                          {m.name}
-                        </Typography>
-                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                          {m.category || "—"}
-                        </Typography>
-                        <Typography variant="body2">
-                          ${m.price}
-                        </Typography>
-                        <Chip 
-                          label={m.isAvailable ? "Available" : "Unavailable"} 
-                          color={m.isAvailable ? "success" : "default"} 
-                          size="small" 
-                          sx={{ mt: 1 }}
-                        />
+          <Card>
+            <CardHeader>
+              <CardTitle>Menu Preview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {menu.length === 0 ? (
+                <p className="text-muted-foreground">No menu items.</p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {menu.slice(0, 6).map((m) => (
+                    <Card key={m._id} className="border">
+                      <CardContent className="pt-6">
+                        <h3 className="text-lg font-semibold">{m.name}</h3>
+                        <p className="text-muted-foreground mb-2">{m.category || "—"}</p>
+                        <p className="text-lg font-semibold">${m.price}</p>
+                        <Badge className={`mt-2 ${m.isAvailable ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"}`}>
+                          {m.isAvailable ? "Available" : "Unavailable"}
+                        </Badge>
                       </CardContent>
                     </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            )}
-          </Paper>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </>
-      )}
-    </Container>
+      )
+      }
+    </div >
   );
 }

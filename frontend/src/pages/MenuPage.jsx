@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { getMenu } from "../api/menuApi";
-import {
-    Container,
-    Typography,
-    Grid,
-    Card,
-    CardContent,
-    Chip,
-    Box,
-    CircularProgress
-} from "@mui/material";
+import { Button } from "@/components/ui/button";
+import { useTheme } from "../context/ThemeContext";
+import { cn } from "@/lib/utils";
 
 export default function MenuPage() {
     const [menu, setMenu] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { theme } = useTheme();
+    const isDark = theme === "dark";
 
     useEffect(() => {
         getMenu()
@@ -27,67 +22,58 @@ export default function MenuPage() {
             });
     }, []);
 
-    if (loading) {
-        return (
-            <Container sx={{ mt: 4, textAlign: 'center' }}>
-                <CircularProgress />
-                <Typography sx={{ mt: 2 }}>Loading menu...</Typography>
-            </Container>
-        );
-    }
-
-    if (menu.length === 0) {
-        return (
-            <Container sx={{ mt: 4 }}>
-                <Typography variant="h4" gutterBottom>Menu</Typography>
-                <Typography>No menu items available.</Typography>
-            </Container>
-        );
-    }
+    if (loading) return <div className="text-center py-20">Loading...</div>;
 
     return (
-        <Container sx={{ mt: 4, mb: 4 }}>
-            <Typography variant="h3" component="h1" gutterBottom fontWeight="bold" align="center">
-                Our Menu
-            </Typography>
+        <div className="min-h-screen bg-background py-16">
+            <div className="container mx-auto px-4">
+                <h1 className="text-4xl font-bold text-center mb-24">Our Menu</h1>
 
-            <Grid container spacing={3}>
-                {menu.map((item) => (
-                    <Grid item xs={12} sm={6} md={4} key={item._id}>
-                        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                            <CardContent sx={{ flexGrow: 1 }}>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                                    <Typography variant="h5" component="div">
-                                        {item.name}
-                                    </Typography>
-                                    <Typography variant="h6" color="primary">
-                                        {item.price} EGP
-                                    </Typography>
-                                </Box>
-
-                                <Typography color="text.secondary" gutterBottom>
-                                    {item.category}
-                                </Typography>
-
-                                {item.description && (
-                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                                        {item.description}
-                                    </Typography>
-                                )}
-
-                                <Box sx={{ mt: 2 }}>
-                                    <Chip
-                                        label={item.isAvailable ? "Available" : "Not Available"}
-                                        color={item.isAvailable ? "success" : "error"}
-                                        variant="outlined"
-                                        size="small"
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-24">
+                    {menu.map((item) => (
+                        <div
+                            key={item._id}
+                            className={cn(
+                                "relative rounded-[2rem] p-6 pt-28 text-center shadow-sm hover:shadow-md transition-all duration-300 group",
+                                isDark ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+                            )}
+                        >
+                            {/* Floating Image */}
+                            <div className="absolute -top-20 left-1/2 -translate-x-1/2">
+                                <div className={cn(
+                                    "relative w-48 h-48 rounded-full shadow-xl overflow-hidden border-[6px] transition-transform duration-300 group-hover:scale-105",
+                                    isDark ? "border-gray-800" : "border-white"
+                                )}>
+                                    <img
+                                        src={item.image || "https://placehold.co/200x200?text=No+Image"}
+                                        alt={item.name}
+                                        className="w-full h-full object-cover"
                                     />
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                ))}
-            </Grid>
-        </Container>
+                                </div>
+                                {/* Price Badge */}
+                                <div className={cn(
+                                    "absolute top-4 right-2 bg-black text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-sm border-2 shadow-lg z-10",
+                                    isDark ? "border-gray-800" : "border-white"
+                                )}>
+                                    ${item.price}
+                                </div>
+                            </div>
+
+                            {/* Content */}
+                            <h3 className={cn("text-xl font-bold mb-3 mt-2", isDark ? "text-white" : "text-gray-900")}>
+                                {item.name}
+                            </h3>
+                            <p className={cn("text-sm mb-6 line-clamp-3 leading-relaxed px-2", isDark ? "text-gray-300" : "text-muted-foreground")}>
+                                {item.description || "No description available."}
+                            </p>
+
+                            <div className="text-sm font-medium text-primary uppercase tracking-wider">
+                                {item.category}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
     );
 }

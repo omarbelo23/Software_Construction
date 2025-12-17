@@ -16,7 +16,12 @@ export default {
     },
 
     list: async (req, res) => {
-        const all = await feedbackService.getAllFeedback();
-        res.json(all);
+        try {
+            const all = await feedbackService.getAllFeedback();
+            res.json(all);
+        } catch (err) {
+            console.error("List feedback error:", err);
+            res.status(400).json({ error: err.message });
+        }
     }
 };

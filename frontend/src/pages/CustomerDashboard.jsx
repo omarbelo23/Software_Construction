@@ -2,23 +2,17 @@ import { useEffect, useState } from "react";
 import { listUserReservations, deleteReservation } from "../api/reservationApi.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import { Link, useNavigate } from "react-router-dom";
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
-import Divider from '@mui/material/Divider';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import Box from '@mui/material/Box';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import FeedbackModal from "../components/FeedbackModal";
 
 export default function CustomerDashboard() {
     const { token, user } = useAuth();
     const navigate = useNavigate();
     const [reservations, setReservations] = useState([]);
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+    const [selectedReservationId, setSelectedReservationId] = useState(null);
 
     useEffect(() => {
         loadReservations();
@@ -44,101 +38,108 @@ export default function CustomerDashboard() {
         }
     };
 
+    const handleFeedback = (reservationId) => {
+        setSelectedReservationId(reservationId);
+        setIsFeedbackOpen(true);
+    };
+
     return (
-        <Container maxWidth="md">
-            <Typography variant="h4" gutterBottom>
-                Welcome, {user?.name}
-            </Typography>
-            <Typography variant="subtitle1" color="textSecondary" gutterBottom>
-                Your Dashboard
-            </Typography>
+        <div className="container mx-auto p-6 max-w-4xl">
+            <h1 className="text-3xl font-bold mb-2">Welcome, {user?.name}</h1>
+            <p className="text-muted-foreground mb-6">Your Dashboard</p>
 
-            <Divider sx={{ my: 3 }} />
+            <Separator className="my-6" />
 
-            <Typography variant="h5" gutterBottom>
-                Your Reservations
-            </Typography>
+            <h2 className="text-2xl font-semibold mb-4">Your Reservations</h2>
 
             {reservations.length === 0 ? (
-                <Typography>You have no reservations yet.</Typography>
+                <p className="text-muted-foreground">You have no reservations yet.</p>
             ) : (
-                <Grid container spacing={3}>
+                <div className="space-y-4">
                     {reservations.map((r) => (
-                        <Grid item xs={12} key={r._id}>
-                            <Card variant="outlined">
+                        <Card key={r._id}>
+                            <CardHeader>
+                                <CardTitle>
+                                    {r.date} at {r.time}
+                                </CardTitle>
+                                <p className="text-sm text-muted-foreground">
+                                    Party Size: {r.partySize || r.size || 'Not specified'}
+                                </p>
+                            </CardHeader>
+
+                            {r.foodOrders && r.foodOrders.length > 0 && (
                                 <CardContent>
-                                    <Box display="flex" justifyContent="space-between" alignItems="flex-start">
-                                        <Box>
-                                            <Typography variant="h6">
-                                                {r.date} at {r.time}
-                                            </Typography>
-                                            <Typography color="textSecondary">
-                                                Party Size: {r.partySize || r.size || 'Not specified'}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                    
-                                    {r.foodOrders && r.foodOrders.length > 0 && (
-                                        <Box mt={2}>
-                                            <Typography variant="subtitle2" color="primary">
-                                                Food Orders:
-                                            </Typography>
-                                            <List dense>
-                                                {r.foodOrders.map((order, idx) => (
-                                                    <ListItem key={idx} disablePadding>
-                                                        <ListItemText 
-                                                            primary={`${order.quantity}x ${order.menuItemId?.name || 'Item'}`}
-                                                            secondary={order.menuItemId?.price && `$${(order.menuItemId.price * order.quantity).toFixed(2)}`}
-                                                        />
-                                                    </ListItem>
-                                                ))}
-                                            </List>
-                                            <Typography variant="subtitle2" sx={{ mt: 1, fontWeight: 'bold' }}>
-                                                Total: ${r.foodOrders.reduce((sum, order) => sum + (order.quantity * (order.menuItemId?.price || 0)), 0).toFixed(2)}
-                                            </Typography>
-                                        </Box>
-                                    )}
+                                    <p className="text-sm font-semibold text-primary mb-2">Food Orders:</p>
+                                    <ul className="space-y-1">
+                                        {r.foodOrders.map((order, idx) => (
+                                            <li key={idx} className="text-sm flex justify-between">
+                                                <span>{order.quantity}x {order.menuItemId?.name || 'Item'}</span>
+                                                {order.menuItemId?.price && (
+                                                    <span>${(order.menuItemId.price * order.quantity).toFixed(2)}</span>
+                                                )}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <p className="text-sm font-bold mt-2">
+                                        Total: ${r.foodOrders.reduce((sum, order) => sum + (order.quantity * (order.menuItemId?.price || 0)), 0).toFixed(2)}
+                                    </p>
                                 </CardContent>
-                                <CardActions>
-                                    <Button 
-                                        size="small" 
-                                        variant="contained" 
-                                        color="primary"
-                                        onClick={() => navigate(`/order-food/${r._id}`)}
-                                    >
-                                        Order Food
-                                    </Button>
-                                    <Button 
-                                        size="small" 
-                                        variant="contained" 
-                                        color="error"
-                                        onClick={() => handleDelete(r._id)}
-                                    >
-                                        Delete
-                                    </Button>
-                                </CardActions>
-                            </Card>
-                        </Grid>
+                            )}
+
+                            <CardFooter className="gap-2">
+                                <Button
+                                    size="sm"
+                                    variant="blue"
+                                    onClick={() => navigate(`/order-food/${r._id}`)}
+                                >
+                                    Order Food
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleFeedback(r._id)}
+                                >
+                                    Feedback
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="red"
+                                    onClick={() => handleDelete(r._id)}
+                                >
+                                    Delete Reservation
+                                </Button>
+                            </CardFooter>
+                        </Card>
                     ))}
-                </Grid>
+                </div>
             )}
 
-            <Divider sx={{ my: 3 }} />
+            <Separator className="my-6" />
 
-            <Typography variant="h5" gutterBottom>
-                Quick Actions
-            </Typography>
-            <List>
-                <ListItem component={Link} to="/reserve">
-                    <ListItemText primary="Make a Reservation" />
-                </ListItem>
-                <ListItem component={Link} to="/menu">
-                    <ListItemText primary="Browse Menu" />
-                </ListItem>
-                <ListItem component={Link} to="/feedback">
-                    <ListItemText primary="Leave Feedback" />
-                </ListItem>
-            </List>
-        </Container>
+            <h2 className="text-2xl font-semibold mb-4">Quick Actions</h2>
+            <div className="grid gap-3">
+                <Button asChild size="lg" variant="secondary" className="h-auto py-4 justify-start">
+                    <Link to="/reserve">
+                        <p className="font-medium">Make a Reservation</p>
+                    </Link>
+                </Button>
+                <Button asChild size="lg" variant="secondary" className="h-auto py-4 justify-start">
+                    <Link to="/menu">
+                        <p className="font-medium">Browse Menu</p>
+                    </Link>
+                </Button>
+                <Button asChild size="lg" variant="secondary" className="h-auto py-4 justify-start">
+                    <Link to="/feedback">
+                        <p className="font-medium">Leave Feedback</p>
+                    </Link>
+                </Button>
+            </div>
+
+            <FeedbackModal
+                isOpen={isFeedbackOpen}
+                onClose={() => setIsFeedbackOpen(false)}
+                reservationId={selectedReservationId}
+            />
+        </div>
     );
 }

@@ -6,6 +6,10 @@ import requireRole from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
+// Get unavailable time slots for a specific date (public - no auth required)
+// GET /api/reservations/unavailable?date=YYYY-MM-DD
+router.get("/unavailable", reservationController.getUnavailableSlots);
+
 // Customer: create reservation
 // POST /api/reservations
 router.post("/", auth, reservationController.create);

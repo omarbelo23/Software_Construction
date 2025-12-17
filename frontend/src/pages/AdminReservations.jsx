@@ -1,37 +1,38 @@
 import { useEffect, useState } from "react";
 import { listAllReservations, deleteReservation } from "../api/reservationApi.js";
 import { useAuth } from "../context/AuthContext.jsx";
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Button from '@mui/material/Button';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Box from '@mui/material/Box';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export default function AdminReservations() {
     const { token } = useAuth();
     const [reservations, setReservations] = useState([]);
     const [filteredReservations, setFilteredReservations] = useState([]);
     const [loading, setLoading] = useState(true);
-    
+
     // Filter states
     const [filters, setFilters] = useState({
         date: "",
@@ -65,8 +66,9 @@ export default function AdminReservations() {
         setLoading(true);
         listAllReservations(token)
             .then(res => {
-                setReservations(res.data);
-                setFilteredReservations(res.data); // Show all by default
+                const data = Array.isArray(res.data) ? res.data : [];
+                setReservations(data);
+                setFilteredReservations(data); // Show all by default
                 setLoading(false);
             })
             .catch(err => {
@@ -90,7 +92,7 @@ export default function AdminReservations() {
 
         // Filter by user name (only if filter is set, case insensitive, partial match)
         if (filters.userName) {
-            filtered = filtered.filter(r => 
+            filtered = filtered.filter(r =>
                 (r.user?.name || "").toLowerCase().includes(filters.userName.toLowerCase())
             );
         }
@@ -119,140 +121,139 @@ export default function AdminReservations() {
     };
 
     if (loading) {
-        return <Container sx={{ p: 4 }}><Typography>Loading reservations...</Typography></Container>;
+        return <div className="container mx-auto py-8"><p>Loading reservations...</p></div>;
     }
 
     return (
-        <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-            <Typography variant="h4" gutterBottom>All Reservations</Typography>
-            <Typography color="textSecondary" gutterBottom>
+        <div className="container mx-auto py-8">
+            <h1 className="text-3xl font-bold mb-2">All Reservations</h1>
+            <p className="text-muted-foreground mb-6">
                 Total: {reservations.length} | Showing: {filteredReservations.length}
-            </Typography>
+            </p>
 
             {/* Filters Section */}
-            <Paper sx={{ p: 3, mb: 3 }}>
-                <Typography variant="h6" gutterBottom>Filters</Typography>
-                <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12} sm={4}>
-                        <TextField
-                            fullWidth
-                            label="Date"
-                            type="date"
-                            InputLabelProps={{ shrink: true }}
-                            value={filters.date}
-                            onChange={(e) => setFilters({...filters, date: e.target.value})}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                        <FormControl fullWidth>
-                            <InputLabel>Time</InputLabel>
+            <Card className="mb-6">
+                <CardHeader>
+                    <CardTitle>Filters</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <Label htmlFor="filter-date">Date</Label>
+                            <Input
+                                id="filter-date"
+                                type="date"
+                                value={filters.date}
+                                onChange={(e) => setFilters({ ...filters, date: e.target.value })}
+                            />
+                        </div>
+                        <div>
+                            <Label htmlFor="filter-time">Time</Label>
                             <Select
                                 value={filters.time}
-                                label="Time"
-                                onChange={(e) => setFilters({...filters, time: e.target.value})}
+                                onValueChange={(value) => setFilters({ ...filters, time: value })}
                             >
-                                <MenuItem value=""><em>All Times</em></MenuItem>
-                                {timeSlots.map((slot) => (
-                                    <MenuItem key={slot.value} value={slot.value}>
-                                        {slot.label}
-                                    </MenuItem>
-                                ))}
+                                <SelectTrigger id="filter-time">
+                                    <SelectValue placeholder="All Times" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="">All Times</SelectItem>
+                                    {timeSlots.map((slot) => (
+                                        <SelectItem key={slot.value} value={slot.value}>
+                                            {slot.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
                             </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                        <TextField
-                            fullWidth
-                            label="User Name"
-                            placeholder="Search by name..."
-                            value={filters.userName}
-                            onChange={(e) => setFilters({...filters, userName: e.target.value})}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Box sx={{ display: 'flex', gap: 2 }}>
-                            <Button variant="contained" onClick={applyFilters}>
-                                Apply Filters
-                            </Button>
-                            <Button variant="outlined" onClick={clearFilters}>
-                                Clear Filters
-                            </Button>
-                        </Box>
-                    </Grid>
-                </Grid>
-            </Paper>
+                        </div>
+                        <div>
+                            <Label htmlFor="filter-userName">User Name</Label>
+                            <Input
+                                id="filter-userName"
+                                placeholder="Search by name..."
+                                value={filters.userName}
+                                onChange={(e) => setFilters({ ...filters, userName: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex gap-2">
+                        <Button onClick={applyFilters}>
+                            Apply Filters
+                        </Button>
+                        <Button variant="outline" onClick={clearFilters}>
+                            Clear Filters
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
 
             {/* Reservations Table */}
             {filteredReservations.length === 0 ? (
-                <Typography>No reservations found with the current filters.</Typography>
+                <p className="text-muted-foreground">No reservations found with the current filters.</p>
             ) : (
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-                                <TableCell>Date</TableCell>
-                                <TableCell>Time</TableCell>
-                                <TableCell>Party Size</TableCell>
-                                <TableCell>Customer Name</TableCell>
-                                <TableCell>Customer Email</TableCell>
-                                <TableCell>Food Orders</TableCell>
-                                <TableCell>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {filteredReservations.map(r => (
-                                <TableRow key={r._id}>
-                                    <TableCell>{r.date}</TableCell>
-                                    <TableCell>{r.time}</TableCell>
-                                    <TableCell>{r.partySize}</TableCell>
-                                    <TableCell>{r.user?.name || 'N/A'}</TableCell>
-                                    <TableCell sx={{ color: 'text.secondary' }}>{r.user?.email || 'N/A'}</TableCell>
-                                    <TableCell>
-                                        {r.foodOrders && r.foodOrders.length > 0 ? (
-                                            <Accordion elevation={0} sx={{ '&:before': { display: 'none' } }}>
-                                                <AccordionSummary
-                                                    expandIcon={<ExpandMoreIcon />}
-                                                    sx={{ p: 0, minHeight: 'auto', '& .MuiAccordionSummary-content': { m: 0 } }}
-                                                >
-                                                    <Typography color="primary" variant="body2">
-                                                        {r.foodOrders.length} item(s) - Total: ${r.foodOrders.reduce((sum, order) => sum + (order.quantity * (order.menuItemId?.price || 0)), 0).toFixed(2)}
-                                                    </Typography>
-                                                </AccordionSummary>
-                                                <AccordionDetails sx={{ p: 0 }}>
-                                                    <List dense disablePadding>
-                                                        {r.foodOrders.map((order, idx) => (
-                                                            <ListItem key={idx} disablePadding>
-                                                                <ListItemText 
-                                                                    primary={`${order.quantity}x ${order.menuItemId?.name || 'Item'}`}
-                                                                    secondary={`$${(order.menuItemId?.price || 0).toFixed(2)}`}
-                                                                    primaryTypographyProps={{ variant: 'caption' }}
-                                                                    secondaryTypographyProps={{ variant: 'caption' }}
-                                                                />
-                                                            </ListItem>
-                                                        ))}
-                                                    </List>
-                                                </AccordionDetails>
-                                            </Accordion>
-                                        ) : (
-                                            <Typography variant="caption" color="textSecondary">No orders</Typography>
-                                        )}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button 
-                                            variant="contained" 
-                                            color="error" 
-                                            size="small"
-                                            onClick={() => handleDelete(r._id)}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </TableCell>
+                <Card>
+                    <CardContent className="pt-6">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead>Time</TableHead>
+                                    <TableHead>Party Size</TableHead>
+                                    <TableHead>Customer Name</TableHead>
+                                    <TableHead>Customer Email</TableHead>
+                                    <TableHead>Food Orders</TableHead>
+                                    <TableHead>Actions</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            </TableHeader>
+                            <TableBody>
+                                {filteredReservations.map(r => (
+                                    <TableRow key={r._id}>
+                                        <TableCell>{r.date}</TableCell>
+                                        <TableCell>{r.time}</TableCell>
+                                        <TableCell>{r.partySize}</TableCell>
+                                        <TableCell>{r.user?.name || 'N/A'}</TableCell>
+                                        <TableCell className="text-muted-foreground">{r.user?.email || 'N/A'}</TableCell>
+                                        <TableCell>
+                                            {r.foodOrders && r.foodOrders.length > 0 ? (
+                                                <Accordion type="single" collapsible className="border-0">
+                                                    <AccordionItem value="item-1" className="border-0">
+                                                        <AccordionTrigger className="py-0 hover:no-underline">
+                                                            <span className="text-sm text-primary">
+                                                                {r.foodOrders.length} item(s) - Total: ${r.foodOrders.reduce((sum, order) => sum + (order.quantity * (order.menuItemId?.price || 0)), 0).toFixed(2)}
+                                                            </span>
+                                                        </AccordionTrigger>
+                                                        <AccordionContent>
+                                                            <div className="space-y-1 pt-2">
+                                                                {r.foodOrders.map((order, idx) => (
+                                                                    <div key={idx} className="text-xs">
+                                                                        <p className="font-medium">{order.quantity}x {order.menuItemId?.name || 'Item'}</p>
+                                                                        <p className="text-muted-foreground">${(order.menuItemId?.price || 0).toFixed(2)}</p>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </AccordionContent>
+                                                    </AccordionItem>
+                                                </Accordion>
+                                            ) : (
+                                                <span className="text-xs text-muted-foreground">No orders</span>
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant="destructive"
+                                                size="sm"
+                                                onClick={() => handleDelete(r._id)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
             )}
-        </Container>
+        </div>
     );
 }

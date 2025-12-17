@@ -6,7 +6,7 @@ export default {
     listMenu: () => menuRepo.listAll(),
 
     // Admin: create a new menu item
-    createMenuItem: async (name, description, price, category, isAvailable = true) => {
+    createMenuItem: async (name, description, price, category, image, isAvailable = true) => {
         if (!name || price == null) {
             throw new Error("name and price are required");
         }
@@ -16,7 +16,16 @@ export default {
             description,
             price,
             category,
+            image,
             isAvailable,
         });
+    },
+
+    updateMenuItem: async (id, data) => {
+        return menuRepo.update(id, data);
+    },
+
+    deleteMenuItem: async (id) => {
+        return menuRepo.delete(id);
     },
 };

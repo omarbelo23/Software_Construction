@@ -14,4 +14,12 @@ router.get("/", menuController.list);
 // POST /api/menu
 router.post("/", auth, requireRole("admin"), menuController.create);
 
+// Admin: update a menu item
+// PUT /api/menu/:id
+router.put("/:id", auth, requireRole("admin"), menuController.update);
+
+// Admin: delete a menu item
+// DELETE /api/menu/:id
+router.delete("/:id", auth, requireRole("admin"), menuController.delete);
+
 export default router;

@@ -19,6 +19,21 @@ export default {
         }
     },
 
+    // Get unavailable time slots for a specific date
+    getUnavailableSlots: async (req, res) => {
+        try {
+            const { date } = req.query;
+            if (!date) {
+                return res.status(400).json({ message: "Date is required" });
+            }
+            const unavailableSlots = await reservationService.getUnavailableSlots(date);
+            res.json({ unavailableSlots });
+        } catch (err) {
+            console.error("Get unavailable slots error:", err);
+            res.status(400).json({ message: err.message });
+        }
+    },
+
     // Customer: view own reservations
     listUser: async (req, res) => {
         try {

@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signup } from "../api/authApi.js";
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function Signup() {
     const [form, setForm] = useState({ name: "", email: "", password: "", adminCode: "" });
@@ -24,68 +22,68 @@ export default function Signup() {
     };
 
     return (
-        <Container maxWidth="xs">
-            <Paper elevation={3} sx={{ p: 4, mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Typography component="h1" variant="h5">
-                    Signup
-                </Typography>
-                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="name"
-                        label="Name"
-                        name="name"
-                        autoComplete="name"
-                        autoFocus
-                        value={form.name}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="new-password"
-                        value={form.password}
-                        onChange={(e) => setForm({ ...form, password: e.target.value })}
-                    />
-                    <TextField
-                        margin="normal"
-                        fullWidth
-                        name="adminCode"
-                        label="Admin Code (optional)"
-                        type="text"
-                        id="adminCode"
-                        value={form.adminCode}
-                        onChange={(e) => setForm({ ...form, adminCode: e.target.value })}
-                        helperText="Leave blank for customer account. Enter admin code for admin access."
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
-                    >
-                        Signup
-                    </Button>
-                </Box>
-            </Paper>
-        </Container>
+        <div className="flex min-h-screen items-center justify-center p-4">
+            <Card className="w-full max-w-md">
+                <CardHeader>
+                    <CardTitle className="text-2xl text-center">Sign Up</CardTitle>
+                    <CardDescription className="text-center">
+                        Create your account to get started
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Name</Label>
+                            <Input
+                                id="name"
+                                type="text"
+                                placeholder="Enter your name"
+                                value={form.name}
+                                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                required
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="email">Email Address</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                placeholder="Enter your email"
+                                value={form.email}
+                                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                                required
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="password">Password</Label>
+                            <Input
+                                id="password"
+                                type="password"
+                                placeholder="Enter your password"
+                                value={form.password}
+                                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                required
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="adminCode">Admin Code (optional)</Label>
+                            <Input
+                                id="adminCode"
+                                type="text"
+                                placeholder="Leave blank for customer account"
+                                value={form.adminCode}
+                                onChange={(e) => setForm({ ...form, adminCode: e.target.value })}
+                            />
+                            <p className="text-sm text-muted-foreground">
+                                Leave blank for customer account. Enter admin code for admin access.
+                            </p>
+                        </div>
+                        <Button type="submit" className="w-full">
+                            Sign Up
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
     );
 }

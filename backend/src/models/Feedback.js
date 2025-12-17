@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const feedbackSchema = new mongoose.Schema({
-    userId: mongoose.Schema.Types.ObjectId,
-    reservationId: mongoose.Schema.Types.ObjectId,
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    reservationId: { type: mongoose.Schema.Types.ObjectId, ref: "Reservation" },
     rating: Number,
     comment: String
 });
