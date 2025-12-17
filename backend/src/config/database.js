@@ -39,9 +39,9 @@ class Database {
     }
 }
 
-// SINGLETON: Export a single frozen instance to prevent modification
+// SINGLETON: Export a single instance
 const databaseInstance = new Database();
-Object.freeze(databaseInstance);
+// Note: We do not freeze the instance because we need to update isConnected state.
 
 export default async function connectDB() {
     await databaseInstance.connect();

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:4001/api/reservation-food-orders";
+const API = "http://localhost:4000/api/reservation-food-orders";
 
 export const createFoodOrder = (token, reservationId, data) =>
     axios.post(`${API}/${reservationId}`, data, {

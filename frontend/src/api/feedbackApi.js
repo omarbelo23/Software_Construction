@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:4001/api/feedback";
+const API = "http://localhost:4000/api/feedback";
 
 export const submitFeedback = (token, data) =>
     axios.post(API, data, {

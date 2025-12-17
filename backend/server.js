@@ -31,7 +31,7 @@ app.use("/api/reservation-food-orders", reservationFoodOrderRoutes);
 
 // IMPORTANT: Do NOT use process.env.PORT at all for now.
 // Hardcode to a safe port that we know is free.
-const PORT = 4001;
+const PORT = 4000;
 
 console.log("Starting server on fixed port:", PORT);
 

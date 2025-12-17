@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:4001/api/reservations";
+const API = "http://localhost:4000/api/reservations";
 
 // Get unavailable time slots for a specific date (no auth required)
 export const getUnavailableSlots = (date) =>

@@ -1,10 +1,10 @@
 import axios from "axios";
 
 export const getMenu = () =>
-    axios.get("http://localhost:4001/api/menu");
+    axios.get("http://localhost:4000/api/menu");
 
 export const createMenuItem = (token, data) =>
-    axios.post("http://localhost:4001/api/menu", data, {
+    axios.post("http://localhost:4000/api/menu", data, {
         headers: { Authorization: `Bearer ${token}` }
     });
 
