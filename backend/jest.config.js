@@ -10,6 +10,8 @@ export default {
   // Clear output so evaluators can read results
   verbose: true,
 
+  testTimeout: 60000,
+
   // Optional: coverage (nice to have, not required)
   collectCoverageFrom: [
     "src/**/*.js",

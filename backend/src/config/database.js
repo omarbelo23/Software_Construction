@@ -52,4 +52,8 @@ const connectDB = async () => {
     }
 };
 
+const connectDB = async () => {
+    await databaseInstance.connect();
+};
+
 export default connectDB;
