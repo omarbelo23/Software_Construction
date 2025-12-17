@@ -85,8 +85,8 @@ export default function AdminReservations() {
             filtered = filtered.filter(r => r.date === filters.date);
         }
 
-        // Filter by time (only if filter is set)
-        if (filters.time) {
+        // Filter by time (only if filter is set and not "all")
+        if (filters.time && filters.time !== "all") {
             filtered = filtered.filter(r => r.time === filters.time);
         }
 
@@ -157,7 +157,7 @@ export default function AdminReservations() {
                                     <SelectValue placeholder="All Times" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">All Times</SelectItem>
+                                    <SelectItem value="all">All Times</SelectItem>
                                     {timeSlots.map((slot) => (
                                         <SelectItem key={slot.value} value={slot.value}>
                                             {slot.label}
