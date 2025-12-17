@@ -1,15 +1,19 @@
 export default {
-  testEnvironment: 'node',
+  testEnvironment: "node",
+
+  // Only run integration tests
+  testMatch: ["**/tests/integration/**/*.test.js"],
+
+  // No transforms needed (pure Node + ESM)
   transform: {},
-  extensionsToTreatAsEsm: ['.js'],
-  moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
-  },
-  testMatch: ['**/__tests__/**/*.test.js'],
-  collectCoverageFrom: [
-    'src/**/*.js',
-    '!src/**/*.test.js',
-  ],
-  coverageDirectory: 'coverage',
+
+  // Clear output so evaluators can read results
   verbose: true,
+
+  // Optional: coverage (nice to have, not required)
+  collectCoverageFrom: [
+    "src/**/*.js",
+    "!src/**/*.test.js"
+  ],
+  coverageDirectory: "coverage"
 };

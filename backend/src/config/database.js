@@ -42,7 +42,14 @@ class Database {
 // SINGLETON: Export a single instance
 const databaseInstance = new Database();
 // Note: We do not freeze the instance because we need to update isConnected state.
-
-export default async function connectDB() {
-    await databaseInstance.connect();
+const connectDB = async () => {
+    try {
+        await mongoose.connect(process.env.MONGODB_URI);
+        console.log("MongoDB connected");
+    } catch (error) {
+        console.error("Database connection error:", error);
+        process.exit(1);
+    }
 };
+
+export default connectDB;

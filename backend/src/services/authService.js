@@ -1,73 +1,68 @@
-// src/services/authService.js
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import userRepo from "../repositories/userRepository.js";
+import { JWT_SECRET } from "../config/jwt.js";
 
 function toSafeUser(user) {
-    return {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-    };
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  };
 }
 
 export default {
-    // Signup: create a new user (default role = "customer")
-    signup: async (name, email, password, adminCode) => {
-        const existing = await userRepo.findByEmail(email);
-        if (existing) throw new Error("Email already exists");
+  signup: async (name, email, password, adminCode) => {
+    const existing = await userRepo.findByEmail(email);
+    if (existing) throw new Error("Email already exists");
 
-        const passwordHash = await bcrypt.hash(password, 10);
+    if (!password) throw new Error("Password is required");
 
-        // Check if admin code is provided and correct
-        const ADMIN_SECRET_CODE = process.env.ADMIN_CODE || "ADMIN2024";
-        const role = (adminCode && adminCode === ADMIN_SECRET_CODE) ? "admin" : "customer";
+    const passwordHash = await bcrypt.hash(password, 10);
 
-        const user = await userRepo.create({
-            name,
-            email,
-            passwordHash,
-            role: role,
-        });
+    const ADMIN_SECRET_CODE = process.env.ADMIN_CODE || "ADMIN2024";
+    const role =
+      adminCode && adminCode === ADMIN_SECRET_CODE ? "admin" : "customer";
 
-        // Return user without passwordHash
-        return toSafeUser(user);
-    },
+    const user = await userRepo.create({
+      name,
+      email,
+      passwordHash,
+      role,
+    });
 
-    // Login: return JWT + safe user data
-    login: async (email, password) => {
-        const user = await userRepo.findByEmail(email);
-        if (!user) throw new Error("Invalid credentials");
+    return toSafeUser(user);
+  },
 
-        const match = await bcrypt.compare(password, user.passwordHash);
-        if (!match) throw new Error("Invalid credentials");
+  login: async (email, password) => {
+    if (!email || !password) throw new Error("Email and password are required");
 
-        const token = jwt.sign(
-            { id: user._id, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: "1d" }
-        );
+    const user = await userRepo.findByEmail(email);
+    if (!user) throw new Error("Invalid credentials");
 
-        return {
-            token,
-            user: toSafeUser(user),
-        };
-    },
+    const match = await bcrypt.compare(password, user.passwordHash);
+    if (!match) throw new Error("Invalid credentials");
 
-    // Admin: Get all users
-    getAllUsers: async () => {
-        return await userRepo.findAll();
-    },
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
 
-    // Admin: Delete a user
-    deleteUser: async (userId) => {
-        const user = await userRepo.findById(userId);
-        
-        if (!user) {
-            throw new Error('User not found');
-        }
-        
-        return await userRepo.deleteById(userId);
-    },
+    return {
+      token,
+      user: toSafeUser(user),
+    };
+  },
+
+  getAllUsers: async () => {
+    return await userRepo.findAll();
+  },
+
+  deleteUser: async (userId) => {
+    const user = await userRepo.findById(userId);
+    if (!user) throw new Error("User not found");
+    return await userRepo.deleteById(userId);
+  },
 };
