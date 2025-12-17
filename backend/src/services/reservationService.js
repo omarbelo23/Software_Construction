@@ -1,23 +1,31 @@
 // src/services/reservationService.js
 import reservationRepo from "../repositories/reservationRepository.js";
+import OnlineReservationStrategy from "../strategies/OnlineReservationStrategy.js";
 
 const MAX_RESERVATIONS_PER_SLOT = 5;
 
+// Strategy Registry
+const strategies = {
+    'online': new OnlineReservationStrategy()
+};
+
 export default {
     // Create reservation for a customer
-    createReservation: async (userId, date, time, size) => {
-        // Check if user already has a reservation at this date and time
-        const existingReservation = await reservationRepo.findByUserDateAndTime(userId, date, time);
+    // DESIGN PATTERN: Strategy (Context)
+    // - The Context maintains a reference to a Strategy object.
+    // - It delegates the work (validation) to the Strategy object instead of implementing it directly.
+    createReservation: async (userId, date, time, size, type = 'online') => {
+        // Select strategy dynamically based on the type
+        const strategy = strategies[type] || strategies['online'];
 
-        if (existingReservation) {
-            throw new Error('You already have a reservation at this date and time');
-        }
-
-        // Check if this time slot is already full (max 5 reservations)
-        const currentCount = await reservationRepo.countByDateAndTime(date, time);
-        if (currentCount >= MAX_RESERVATIONS_PER_SLOT) {
-            throw new Error('This time slot is fully booked. Please choose another time.');
-        }
+        // Delegate validation to the selected strategy
+        await strategy.validate({
+            userId,
+            date,
+            time,
+            repository: reservationRepo,
+            MAX_RESERVATIONS_PER_SLOT
+        });
 
         // Create the reservation
         return reservationRepo.create({ userId, date, time, partySize: size });
